@@ -1,0 +1,23 @@
+# The legacy sources are ISO-8859-1 encoded and tab-indented. Keep it that way:
+# re-saving them as UTF-8 corrupts the copyright symbol in every license header.
+root = true
+
+[*]
+indent_style = tab
+tab_width = 4
+insert_final_newline = false
+
+[*.java]
+charset = latin1
+
+[*.{xml,properties}]
+charset = latin1
+
+[*.{md,yml,yaml,json,sh}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+
+[*.sh]
+end_of_line = lf

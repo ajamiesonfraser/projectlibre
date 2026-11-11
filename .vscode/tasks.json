@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build ProjectLibre",
+      "type": "shell",
+      "command": "scripts/build.sh",
+      "windows": { "command": "scripts\\build.cmd" },
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": "$javac"
+    },
+    {
+      "label": "Run ProjectLibre (sample project)",
+      "type": "shell",
+      "command": "scripts/run.sh \"openproj_build/resources/samples/Commercial construction project plan.pod\"",
+      "dependsOn": "Build ProjectLibre",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run ProjectLibre (classic theme)",
+      "type": "shell",
+      "command": "scripts/run.sh \"\" -Dprojectlibre.laf=classic",
+      "dependsOn": "Build ProjectLibre",
+      "problemMatcher": []
+    },
+    {
+      "label": "Screenshot Gantt view (headless)",
+      "type": "shell",
+      "command": "scripts/screenshot.sh",
+      "dependsOn": "Build ProjectLibre",
+      "problemMatcher": []
+    }
+  ]
+}

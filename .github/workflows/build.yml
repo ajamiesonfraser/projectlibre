@@ -1,0 +1,41 @@
+# Builds ProjectLibre on every push / pull request and uploads the jar plus a
+# headless screenshot of the Gantt view, so UI changes can be reviewed in PRs.
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        java: ['11', '21']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+
+      - name: Install Ant and headless display tools
+        run: sudo apt-get update && sudo apt-get install -y ant xvfb imagemagick
+
+      - name: Build
+        run: scripts/build.sh dist
+
+      - name: Screenshot of the Gantt view
+        if: matrix.java == '21'
+        run: WAIT=20 scripts/screenshot.sh build/screenshots/gantt.png
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: projectlibre-java${{ matrix.java }}
+          path: |
+            openproj_build/dist/
+            build/screenshots/
+          if-no-files-found: warn

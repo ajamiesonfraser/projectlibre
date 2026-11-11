@@ -1,0 +1,28 @@
+// Dev container for GitHub Codespaces / VS Code "Reopen in Container".
+// Gives you JDK 21, Ant, and a virtual display for screenshots.
+// The app's window can be viewed through the desktop-lite feature (noVNC on port 6080).
+{
+  "name": "ProjectLibre",
+  "image": "mcr.microsoft.com/devcontainers/java:1-21-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "none",
+      "installAnt": "true"
+    },
+    "ghcr.io/devcontainers/features/desktop-lite:1": {}
+  },
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": { "label": "Desktop (noVNC, password: vscode)" }
+  },
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y xvfb imagemagick xdotool && scripts/build.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "redhat.vscode-xml",
+        "editorconfig.editorconfig"
+      ]
+    }
+  }
+}
