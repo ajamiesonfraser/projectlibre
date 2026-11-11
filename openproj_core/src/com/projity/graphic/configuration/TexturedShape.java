@@ -75,6 +75,11 @@ public class TexturedShape {
 
 	String colorName = null;
 
+	/** Optional fill colour. When set, the shape is filled with it and outlined with colorName. */
+	String fillColorName = null;
+
+	Color fillColor = null;
+
 	String strokeName = null;
 
 	String shapeName = null;
@@ -90,7 +95,8 @@ public class TexturedShape {
 		shape = PredefinedShape.find(shapeName);
 		color = Colors.findColor(colorName);
 		stroke = PredefinedStroke.find(strokeName);
-		paint = new PredefinedPaint(PredefinedPaint.find(paintName), color, Colors.findColor("WHITE"));
+		fillColor = fillColorName == null ? null : Colors.findColor(fillColorName);
+		paint = new PredefinedPaint(PredefinedPaint.find(paintName), fillColor == null ? color : fillColor, Colors.findColor("WHITE"));
 	}
 
 	public void setShapeName(String shapeName) {
@@ -107,6 +113,19 @@ public class TexturedShape {
 
 	public void setPaintName(String paintName) {
 		this.paintName = paintName;
+	}
+
+	public void setFillColorName(String fillColorName) {
+		this.fillColorName = fillColorName;
+	}
+
+	public String getFillColorName() {
+		return fillColorName;
+	}
+
+	/** @return the fill colour, or the outline colour if no separate fill was configured */
+	public Color getFillColor() {
+		return fillColor == null ? color : fillColor;
 	}
 
 	public Color getColor() {

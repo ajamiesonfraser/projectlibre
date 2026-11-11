@@ -49,39 +49,47 @@ must be at least 100 x 25 pixels.  When users click on the "OpenProj" logo it
 must direct them back to http://www.projity.com.
 -->
 <view>
+	<!--
+	  Gantt bar styles. colorName is the outline (and link / label) colour, the
+	  optional fillColorName is the bar fill. Colours may be names from
+	  com.projity.graphic.configuration.shape.Colors or #rrggbb hex values.
+	  The palette follows Microsoft Project's defaults: soft blue tasks,
+	  soft red critical tasks, near-black summary brackets and milestones.
+	  See docs/ui-ux/DESIGN-SYSTEM.md before changing colours.
+	-->
 	<bar>
 		<format id="Bar.totalSlack" row="1" from="Field.earlyStart" to="Field.lateFinish">
-			<middle shapeName="FULL_HEIGHT" colorName="BLUE" paintName="DIAGONAL" strokeName="SOLID"/>
+			<middle shapeName="FULL_HEIGHT" colorName="#A9C1DE" paintName="DIAGONAL" strokeName="SOLID"/>
 		</format>
 		<format id="Bar.task" row="1" layer="1" intervalGenerator="com.projity.pm.graphic.gantt.GanttBarIntervalGenerator" from="Field.start" to="Field.finish">
-			<middle shapeName="FULL_HEIGHT" colorName="BLUE" paintName="DEFAULT" strokeName="FRAMED"/>
+			<middle shapeName="FULL_HEIGHT" colorName="#3E75B8" fillColorName="#8FB8E6" paintName="SOLID" strokeName="FRAMED"/>
 		</format>
 		<format id="Bar.milestone" row="1" layer="1" intervalGenerator="com.projity.pm.graphic.gantt.GanttBarIntervalGenerator"  from="Field.finish" to="Field.finish">
-			<start shapeName="DIAMOND" colorName="BLACK" paintName="SOLID"/>
+			<start shapeName="DIAMOND" colorName="#2E3338" paintName="SOLID"/>
 		</format>
 		<format id="Bar.summary" row="1" layer="1" intervalGenerator="com.projity.pm.graphic.gantt.GanttBarIntervalGenerator"  from="Field.start" to="Field.finish">
-			<start shapeName="PENTAGON_DOWN" colorName="BLACK" paintName="SOLID" />
-			<middle shapeName="HALF_HEIGHT_TOP" colorName="BLACK" paintName="SOLID"/>
-			<end shapeName="PENTAGON_DOWN" colorName="BLACK" paintName="SOLID"/>
+			<start shapeName="PENTAGON_DOWN" colorName="#3B3F45" paintName="SOLID" />
+			<middle shapeName="HALF_HEIGHT_TOP" colorName="#3B3F45" paintName="SOLID"/>
+			<end shapeName="PENTAGON_DOWN" colorName="#3B3F45" paintName="SOLID"/>
 		</format>
 		<format id="Bar.critical" row="1" layer="1" intervalGenerator="com.projity.pm.graphic.gantt.GanttBarIntervalGenerator"  from="Field.start" to="Field.finish">
-			<middle shapeName="FULL_HEIGHT" colorName="RED" paintName="DEFAULT" strokeName="FRAMED"/>
+			<middle shapeName="FULL_HEIGHT" colorName="#C0392B" fillColorName="#F2A39B" paintName="SOLID" strokeName="FRAMED"/>
 		</format>
 <!--
 		<format id="Bar.late"  row="1" layer="1" intervalGenerator="com.projity.pm.graphic.gantt.GanttBarIntervalGenerator"  from="Field.start" to="Field.finish">
-			<middle shapeName="FULL_HEIGHT" colorName="PURPLE" paintName="DEFAULT" strokeName="FRAMED"/>
+			<middle shapeName="FULL_HEIGHT" colorName="#7E57C2" fillColorName="#CDB9EC" paintName="SOLID" strokeName="FRAMED"/>
 		</format>
 -->		
 		<format id="Bar.assignment" row="1" layer="1" intervalGenerator="com.projity.pm.graphic.gantt.GanttBarIntervalGenerator"  from="Field.start" to="Field.finish">
-			<middle shapeName="HALF_HEIGHT_CENTER" colorName="ORANGE" paintName="DEFAULT" strokeName="FRAMED"/>
+			<middle shapeName="HALF_HEIGHT_CENTER" colorName="#C77A12" fillColorName="#F6C987" paintName="SOLID" strokeName="FRAMED"/>
 		</format>
 
 		<format id="Bar.deadline" row="1" layer="1" from="Field.deadline" to="Field.deadline">
-				<start shapeName="DIAMOND" colorName="YELLOW" paintName="SOLID"/>
+				<start shapeName="DIAMOND" colorName="#2E9E5B" paintName="SOLID"/>
 		</format>
 
 		<format id="Bar.baseline" row="2" from="Field.baselineStart" to="Field.baselineFinish">
-			<middle shapeName="FULL_HEIGHT" colorName="DARK_SLATE_GRAY" paintName="DEFAULT" strokeName="SOLID"/>
+			<middle shapeName="FULL_HEIGHT" colorName="#9AA3AD" paintName="SOLID" strokeName="SOLID"/>
 		</format>
 		<format id="Bar.baseline1" row="3" from="Field.baseline1Start" to="Field.baseline1Finish">
 			<middle shapeName="FULL_HEIGHT" colorName="MAGENTA" paintName="DEFAULT" strokeName="SOLID"/>
@@ -119,7 +127,7 @@ must direct them back to http://www.projity.com.
 				<layout columnGrid="21dlu,3dlu,p:grow" rowGrid="p,p,p,p" border="9px,7px,9px,7px" titleFont="_Default_ BOLD 10" labelFont="_Default_ BOLD 9" valueFont="_Default_ PLAIN 9"/>
 				<layout columnGrid="21dlu,3dlu,p:grow" rowGrid="p,p,p,p" border="8px,10px,8px,10px" titleFont="_Default_ BOLD 10" labelFont="_Default_ BOLD 9" valueFont="_Default_ PLAIN 9"/>
 				<layout columnGrid="21dlu,3dlu,p:grow" rowGrid="p,p,p,p" border="3px,12px,3px,12px" titleFont="_Default_ BOLD 11" labelFont="_Default_ BOLD 9" valueFont="_Default_ PLAIN 9"/>
-				<layout defaultZoom="true" columnGrid="27dlu,3dlu,p:grow" rowGrid="p,p,p,p" border="5px,16px,5px,16px" titleFont="_Default_ BOLD 12" labelFont="_Default_ BOLD 10" valueFont="TimesRoman PLAIN 10"/>
+				<layout defaultZoom="true" columnGrid="27dlu,3dlu,p:grow" rowGrid="p,p,p,p" border="5px,16px,5px,16px" titleFont="_Default_ BOLD 12" labelFont="_Default_ BOLD 10" valueFont="_Default_ PLAIN 10"/>
 				<layout  columnGrid="33dlu,3dlu,p:grow" rowGrid="p,p,p,p" border="8px,21px,8px,21px" titleFont="_Default_ BOLD 15" labelFont="_Default_ BOLD 12" valueFont="_Default_ PLAIN 12"/>
 				<layout  columnGrid="39dlu,3dlu,p:grow" rowGrid="p,p,p,p" border="12px,24px,12px,24px" titleFont="_Default_ BOLD 18" labelFont="_Default_ BOLD 15" valueFont="_Default_ PLAIN 15"/>
 				<box id="nameField" fieldId="Field.name" column="1" row="1" columnSpan="3" rowSpan="1" font="title" />
@@ -265,22 +273,22 @@ must direct them back to http://www.projity.com.
 
 
 		<format id="Link.link1">
-			<middle colorName="BLACK" paintName="SOLID" strokeName="SOLID"/>
-			<end shapeName="LINK_ARROW1" shapeScaleX="10" shapeScaleY="5" colorName="BLACK" paintName="SOLID" strokeName="SOLID"/>
+			<middle colorName="#4A5560" paintName="SOLID" strokeName="SOLID"/>
+			<end shapeName="LINK_ARROW1" shapeScaleX="10" shapeScaleY="5" colorName="#4A5560" paintName="SOLID" strokeName="SOLID"/>
 		</format>
 		<format id="Annotation.normal" fieldId="Field.resourceNames">
-			<middle colorName="BLACK" paintName="SOLID" strokeName="SOLID"/>
+			<middle colorName="#2B2F33" paintName="SOLID" strokeName="SOLID"/>
 		</format>
 		<format id="Annotation.milestone" fieldId="Field.finish">
-			<middle colorName="BLACK" paintName="SOLID" strokeName="SOLID"/>
+			<middle colorName="#2B2F33" paintName="SOLID" strokeName="SOLID"/>
 		</format>
 
 		<format id="Calendar.nonWorking">
-			<middle colorName="LIGHT_GRAY" paintName="DOT_LINE"/>
+			<middle colorName="#F0F1F3" paintName="SOLID"/>
 		</format>
 
 		<format id="Grid.showRows">
-			<middle shapeName="FULL_HEIGHT" colorName="LIGHT_GRAY" paintName="SOLID" strokeName="SOLID"/>
+			<middle shapeName="FULL_HEIGHT" colorName="#ECEEF1" paintName="SOLID" strokeName="SOLID"/>
 		</format>
 
 

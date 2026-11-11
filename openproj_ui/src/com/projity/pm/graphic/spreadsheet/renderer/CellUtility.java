@@ -49,6 +49,8 @@ must direct them back to http://www.projity.com.
 */
 package com.projity.pm.graphic.spreadsheet.renderer;
 
+import com.projity.pm.graphic.laf.ModernTheme;
+
 import java.awt.Color;
 
 import javax.swing.JComponent;
@@ -74,7 +76,7 @@ public class CellUtility {
 		GraphicNode node = model.getNode(row);
 		CellFormat cellFormat=model.getCellProperties(node);
 		if (isSelected){
-			component.setForeground(/*table.getSelectionForeground()*/Color.WHITE);
+			component.setForeground(/*table.getSelectionForeground()*/ModernTheme.selectionForeground());
 			component.setBackground(/*Color.BLACK*/GraphicManager.getInstance().getLafManager().getSelectedBackgroundColor());
 		}else{
 
@@ -85,7 +87,7 @@ public class CellUtility {
 		}
 		//component.setFont(table.getFont());
 		if (hasFocus){
-			component.setBorder( /*UIManager.getBorder("Table.focusCellHighlightBorder")*/new LineBorder(Color.BLACK) );
+			component.setBorder( /*UIManager.getBorder("Table.focusCellHighlightBorder")*/new LineBorder(ModernTheme.focusBorder()) );
 			if (table.isCellEditable(row, column)) {
 				Color foreground=cellFormat.getForegroundObject();
 				component.setForeground((foreground==null)?UIManager.getColor("Table.focusCellForeground"):foreground );

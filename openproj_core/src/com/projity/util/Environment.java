@@ -196,8 +196,9 @@ public class Environment {
 
 	private static HashMap<Integer, String> fonts=new HashMap<Integer, String>();
 	static{
-		fonts.put(GANTT_ANNOTATIONS_FONT,"TimesRoman BOLD 11");
-		fonts.put(NETWORK_FONT, "TimesRoman");
+		// Sans-serif labels next to Gantt bars and in network boxes (was TimesRoman)
+		fonts.put(GANTT_ANNOTATIONS_FONT,"SansSerif PLAIN 11");
+		fonts.put(NETWORK_FONT, "SansSerif");
 	}
 	public static String getFont(int type) {
 		String font=fonts.get(type);

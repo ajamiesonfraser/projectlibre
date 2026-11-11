@@ -199,6 +199,15 @@ public class Colors {
 	public static final Color VERY_LIGHT_GRAY = new Color(0xEAEAEA);
 	public static final Color NOT_TOO_DARK_GRAY=new Color(120,120,120);
 
+	// Modern Gantt palette (UI refresh). Bars use a soft fill with a darker outline,
+	// like Microsoft Project, instead of the old checkerboard textures.
+	/** Progress (% complete) bar drawn inside task bars. */
+	public static final Color GANTT_PROGRESS = new Color(0x1F3F66);
+	/** Vertical line marking today's date. */
+	public static final Color GANTT_TODAY = new Color(0xE07B00);
+	/** Faint vertical separators between major timescale units. */
+	public static final Color GANTT_SCALE_SEPARATOR = new Color(0xD5D9DE);
+
   private static Object[][] data = {
 	  {"ALICE_BLUE",ALICE_BLUE},
 	  {"ANTIQUE_WHITE",ANTIQUE_WHITE},
@@ -352,7 +361,15 @@ public class Colors {
 	}
 
 	public static Color findColor(String key) {
+		if (key == null) return null;
 		Color found = (Color) getColors().get(key);
+		if (found == null && key.startsWith("#")) { // hex notation, e.g. #8FB8E6 //$NON-NLS-1$
+			try {
+				found = Color.decode(key);
+			} catch (NumberFormatException e) {
+				found = null;
+			}
+		}
 		if (found == null) // if not a standard color, then assume that it needs to be parsed by color
 			found = Color.getColor(key);
 		return found;

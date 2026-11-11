@@ -51,6 +51,8 @@ package com.projity.pm.graphic.gantt;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.BasicStroke;
+import java.awt.RenderingHints;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -84,6 +86,7 @@ import com.projity.graphic.configuration.BarStyles;
 import com.projity.graphic.configuration.GraphicConfiguration;
 import com.projity.graphic.configuration.TexturedShape;
 import com.projity.graphic.configuration.shape.PredefinedPaint;
+import com.projity.graphic.configuration.shape.Colors;
 import com.projity.options.GanttOption;
 import com.projity.pm.calendar.CalendarService;
 import com.projity.pm.calendar.WorkingCalendar;
@@ -268,7 +271,7 @@ public class GanttRenderer extends GraphRenderer implements Serializable {
 						completedW=width;
 					completedW=CoordinatesConverter.adaptSmallBarEndX(x, x+completedW, node,config)-x;
 					Rectangle2D progressBar=new Rectangle2D.Double(x,y-config.getGanttProgressBarHeight()/2,completedW,config.getGanttProgressBarHeight());
-					g2.setColor(Color.BLACK);
+					g2.setColor(Colors.GANTT_PROGRESS);
 					g2.fill(progressBar);
 				}
 			}
@@ -277,6 +280,8 @@ public class GanttRenderer extends GraphRenderer implements Serializable {
 		}
 
 	}
+
+	private static final Color ANNOTATION_BACKING=new Color(255,255,255,215);
 
 	private class AnnotationRenderer implements Closure, Serializable {
 		private static final long serialVersionUID = -137778741030744803L;
@@ -334,6 +339,13 @@ public class GanttRenderer extends GraphRenderer implements Serializable {
 			int x=(int)Math.ceil(x1)+config.getGanttBarAnnotationXOffset();
 			int w=fontMetrics.stringWidth(s);//config.getGanttBarAnnotationMaxWidth();
 			int h=config.getGanttBarHeight();
+
+			// light backing so the label stays readable over link lines and shading
+			int textH=fontMetrics.getAscent()+fontMetrics.getDescent();
+			Color oldBacking=g2.getColor();
+			g2.setColor(ANNOTATION_BACKING);
+			g2.fillRect(x-2, y+(h-textH)/2, w+4, textH);
+			g2.setColor(oldBacking);
 
 			if (container==null){
 		    	component.setDoubleBuffered(false);
@@ -581,7 +593,7 @@ public class GanttRenderer extends GraphRenderer implements Serializable {
 		if (container!=null){
 			//scale2 separation lines
 			TimeIterator i=coord.getTimeIterator(bounds.getX(), bounds.getMaxX(),true);
-			g2.setPaint(new PredefinedPaint(PredefinedPaint.DOT_LINE2,Color.GRAY,g2.getBackground()));
+			g2.setPaint(new PredefinedPaint(PredefinedPaint.SOLID,Colors.GANTT_SCALE_SEPARATOR,g2.getBackground()));
 			while (i.hasNext()){
 				TimeInterval interval=i.next();
 				int startX=(int)Math.round(coord.toX(interval.getStart()));
@@ -603,6 +615,16 @@ public class GanttRenderer extends GraphRenderer implements Serializable {
 					g2.setPaint(new PredefinedPaint(PredefinedPaint.DOT_LINE2,Color.GREEN,g2.getBackground()));
 					g2.drawLine(statusDateX,bounds.y,statusDateX,bounds.y+bounds.height);
 				}
+			}
+
+			// today (current date) line, as in Microsoft Project's "Current Date" gridline
+			int todayX=(int)Math.round(coord.toX(System.currentTimeMillis()));
+			if (todayX>=bounds.getX()&&todayX<=bounds.getMaxX()){
+				Stroke oldStroke=g2.getStroke();
+				g2.setPaint(Colors.GANTT_TODAY);
+				g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, new float[]{4f, 3f}, 0f));
+				g2.drawLine(todayX,bounds.y,todayX,bounds.y+bounds.height);
+				g2.setStroke(oldStroke);
 			}
 
 
@@ -644,6 +666,13 @@ public class GanttRenderer extends GraphRenderer implements Serializable {
 
 		paintNonWorkingDays(g2,clipBounds);
 
+		// Smooth bars, diamonds, link lines and labels. Background grid lines
+		// (painted above) stay crisp because they are drawn before this.
+		Object oldAntialias = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+		Object oldTextAntialias = g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
 		//Modif for offline graphics
 
 		double rowHeight=((GanttParams)graphInfo).getRowHeight();
@@ -673,7 +702,6 @@ public class GanttRenderer extends GraphRenderer implements Serializable {
 			if (i.previousIndex()>=i0&&i.previousIndex()<i1){
 				if (!node.isSchedule()) continue;
 				nodeList.add(node);
-				paintAnnotation(g2,node);
 				paintNode(g2,node,true);
 				paintHorizontalLine(g2,node);
 			}
@@ -691,7 +719,15 @@ public class GanttRenderer extends GraphRenderer implements Serializable {
 			paintNode(g2,node,false);
 		}
 
+		// Labels last, so that link lines never strike through them
+		for (ListIterator i=nodeList.listIterator();i.hasNext();){
+			node=(GraphicNode)i.next();
+			paintAnnotation(g2,node);
+		}
+
 		if (visibleBounds!=null) g2.setClip(svgClip);
+		if (oldAntialias!=null) g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, oldAntialias);
+		if (oldTextAntialias!=null) g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, oldTextAntialias);
 
 	}
 

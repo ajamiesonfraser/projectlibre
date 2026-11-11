@@ -55,6 +55,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.util.prefs.Preferences;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -106,24 +107,78 @@ public class LafManagerImpl implements LafManager {
 	 */
     public LookAndFeel getPlaf() {
     	if (plaf == null) {
-			try {
-						int os=Environment.getOs();
-						if (os==Environment.LINUX/*||os==Environment.MAC*/) //$NON-NLS-1$ //$NON-NLS-2$
-								UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel"); //$NON-NLS-1$
-								//UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-						else {
-							UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-							plaf = UIManager.getLookAndFeel();
-							return plaf;
-						}
-		    			plaf = UIManager.getLookAndFeel();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			if (graphicManager!=null) SwingUtilities.updateComponentTreeUI(graphicManager.getContainer());
+    		String choice = getLafChoice();
+    		boolean ok = false;
+    		if (!LAF_CLASSIC.equals(choice) && !LAF_SYSTEM.equals(choice)) {
+    			ok = installModernLaf(choice);
+    		}
+    		if (!ok) {
+    			try {
+    				int os = Environment.getOs();
+    				if (LAF_CLASSIC.equals(choice) || os == Environment.LINUX) //$NON-NLS-1$
+    					UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel"); //$NON-NLS-1$
+    				else
+    					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    			} catch (Exception e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		plaf = UIManager.getLookAndFeel();
+    		if (graphicManager != null && graphicManager.getContainer() != null)
+    			SwingUtilities.updateComponentTreeUI(graphicManager.getContainer());
     	}
     	return plaf;
+    }
+
+    /** System property / preference key used to pick the look and feel. */
+    public static final String LAF_PROPERTY = "projectlibre.laf"; //$NON-NLS-1$
+    public static final String LAF_LIGHT = "light"; //$NON-NLS-1$
+    public static final String LAF_DARK = "dark"; //$NON-NLS-1$
+    public static final String LAF_CLASSIC = "classic"; //$NON-NLS-1$
+    public static final String LAF_SYSTEM = "system"; //$NON-NLS-1$
+
+    /**
+     * Resolves which look and feel to use. Order: -Dprojectlibre.laf=..., then the
+     * saved user preference, then the default (modern light theme).
+     */
+    public static String getLafChoice() {
+    	String choice = System.getProperty(LAF_PROPERTY);
+    	if (choice == null || choice.length() == 0) {
+    		try {
+    			choice = Preferences.userNodeForPackage(LafManagerImpl.class).get(LAF_PROPERTY, LAF_LIGHT);
+    		} catch (Exception e) {
+    			choice = LAF_LIGHT;
+    		}
+    	}
+    	return choice.trim().toLowerCase();
+    }
+
+    /** Persists the look and feel choice; it takes effect on next start. */
+    public static void setLafChoice(String choice) {
+    	try {
+    		Preferences.userNodeForPackage(LafManagerImpl.class).put(LAF_PROPERTY, choice);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+
+    /**
+     * Installs the FlatLaf based theme. FlatLaf is loaded by class name so the
+     * application still starts (with the classic theme) if the jar is missing.
+     */
+    protected boolean installModernLaf(String choice) {
+    	String className = LAF_DARK.equals(choice)
+    		? "com.formdev.flatlaf.FlatDarkLaf" //$NON-NLS-1$
+    		: "com.formdev.flatlaf.FlatLightLaf"; //$NON-NLS-1$
+    	try {
+    		ModernTheme.installDefaults(LAF_DARK.equals(choice));
+    		UIManager.setLookAndFeel(className);
+    		ModernTheme.installOverrides();
+    		return true;
+    	} catch (Throwable t) {
+    		System.err.println("Could not install modern look and feel " + className + ": " + t); //$NON-NLS-1$ //$NON-NLS-2$
+    		return false;
+    	}
     }
 
     /* (non-Javadoc)
@@ -188,14 +243,16 @@ public class LafManagerImpl implements LafManager {
 
 
 	public Color getSelectedBackgroundColor() {
+		if (ModernTheme.isActive()) return ModernTheme.SELECTION_BACKGROUND;
 		return Environment.isMac()?Colors.NOT_TOO_DARK_GRAY:Color.DARK_GRAY;
 	}
 	public Color getUnselectedBackgroundColor() {
 		LookAndFeel laf = UIManager.getLookAndFeel();
 		if (Environment.isMac())
 			return Environment.isMac()?Colors.VERY_LIGHT_GRAY:laf.getDefaults().getColor("TableHeader.background");//table.getTableHeader ().getBackground()
-		else
-			return laf.getDefaults().getColor("TableHeader.focusCellForeground");
+		Color c = laf.getDefaults().getColor("TableHeader.focusCellForeground"); //$NON-NLS-1$
+		if (c == null) c = laf.getDefaults().getColor("TableHeader.background"); //$NON-NLS-1$
+		return c == null ? ModernTheme.HEADER_BACKGROUND : c;
 	}
 
 	public void dumpUIValues() {

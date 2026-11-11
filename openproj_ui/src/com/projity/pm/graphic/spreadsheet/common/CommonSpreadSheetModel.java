@@ -178,6 +178,7 @@ public class CommonSpreadSheetModel extends AbstractTableModel implements CacheL
 	private String[] actions=null;
 	public String[] getActionList(){
 		if (actions==null){
+			if (actionList==null) return new String[0]; // not configured yet (startup race); don't cache
 			actions=convertActions(actionList.getList(getCache().getModel()));
 		}
 		return actions;

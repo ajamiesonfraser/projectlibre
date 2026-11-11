@@ -290,6 +290,8 @@ public abstract class NetworkRenderer extends GraphRenderer{
     }
     public void paint(Graphics g,Rectangle visibleBounds) {
 	    	Graphics2D g2=(Graphics2D)g;
+	    	g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+	    	g2.setRenderingHint(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING, java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 			Rectangle clipBounds = g2.getClipBounds();
 			Rectangle svgClip=clipBounds;

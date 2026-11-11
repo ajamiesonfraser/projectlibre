@@ -88,16 +88,34 @@ public class MainRibbonFrame extends JRibbonFrame implements FrameHolder{
 	}
 
 	public void init() {
+		Dimension size=getDefaultWindowSize();
 		if (Environment.isWindows()) // in windows, this is needed otherwise initial display has no frame
-		   setSize(1024, 768);
-		if (Environment.isMac()) setPreferredSize(new Dimension(1280, 768));
-		else setPreferredSize(new Dimension(1024, 768));
+		   setSize(size);
+		setPreferredSize(size);
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE/*DISPOSE_ON_CLOSE*/);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				graphicManager.closeApplication();
 			}
 		});
+	}
+
+	/**
+	 * Initial window size: 85% of the usable screen area (never smaller than
+	 * 1024x768), so the sheet and the Gantt chart both have room on modern displays.
+	 */
+	public static Dimension getDefaultWindowSize() {
+		int w=1024,h=768;
+		try {
+			java.awt.Rectangle usable=java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+			w=Math.max(w,(int)(usable.width*0.85));
+			h=Math.max(h,(int)(usable.height*0.85));
+			w=Math.min(w,usable.width);
+			h=Math.min(h,usable.height);
+		} catch (Throwable t) {
+			// headless or unusual display setup: keep the classic default
+		}
+		return new Dimension(w,h);
 	}
 
 	public void setGraphicManager(GraphicManager graphicManager) {

@@ -139,12 +139,12 @@ public class SpreadSheetColumnModel extends DefaultTableColumnModel {
 //			System.out.println("setting column " + columnIndex + " to field " + field + " ok = " + (field == getFieldInColumn(columnIndex)));
 
 			if (field.isNameField()) {
-				tc.setPreferredWidth((svg)?170:150);
+				tc.setPreferredWidth((svg)?270:250); // wider task names (MS Project shows ~30 characters)
 				tc.setCellRenderer(new SpreadSheetNameCellRenderer());
 //				tc.setCellEditor(new SpreadSheetNameCellEditor(new SimpleEditor(String.class)));
 				tc.setCellEditor(new SpreadSheetCellEditorAdapter(new SimpleEditor(String.class)));
 			} else if (field == Configuration.getFieldFromId("Field.indicators")) {
-				tc.setPreferredWidth(50);
+				tc.setPreferredWidth(36); // icons only; was 50
 				tc.setCellRenderer(new SpreadSheetCellRendererAdapter(new IndicatorsRenderer()));
 				tc.setHeaderRenderer(new SpreadSheetColumnHeaderRenderer(IndicatorsRenderer.getCellHeader()));
 			} else if (field.getLookupTypes() != null) {

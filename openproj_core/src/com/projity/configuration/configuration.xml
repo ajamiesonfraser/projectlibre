@@ -791,8 +791,8 @@ must direct them back to http://www.projity.com.
 	</timescales>
 
 	<graphic columnHeaderHeight="30" printFooterHeight="15"
-		rowHeaderWidth="40" rowHeight="19" ganttBarHeight="11"
-		ganttProgressBarHeight="4" ganttBarYOffset="4" baselineHeight="4"
+		rowHeaderWidth="40" rowHeight="22" ganttBarHeight="12"
+		ganttProgressBarHeight="4" ganttBarYOffset="5" baselineHeight="4"
 		ganttBarAnnotationXOffset="12" ganttBarAnnotationYOffset="1" 
 		pertCellWidth="200" pertCellHeight="65" pertXOffset="50"
 		pertYOffset="30" treeCellWidth="170" treeCellHeight="50"
