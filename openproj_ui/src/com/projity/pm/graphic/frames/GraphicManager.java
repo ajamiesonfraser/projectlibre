@@ -2974,6 +2974,9 @@ protected boolean loadLocalDocument(String fileName,boolean merge){ //uses serve
 
     public void registerForMacOSXEvents() {
         if (Environment.isMac()) {
+            // Java 9+: standard java.awt.Desktop handlers. com.apple.eawt (used by
+            // OSXAdapter) is inaccessible on current JDKs.
+            if (MacIntegration.install(this, Environment.getStandAlone())) return;
             try {
                 // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
                 // use as delegates for various com.apple.eawt.ApplicationListener methods

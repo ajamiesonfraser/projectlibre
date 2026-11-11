@@ -60,6 +60,16 @@ public class BrowserControl {
 	public static void displayURL(String url) {
 		System.out.println("Showing help: " + url);
 		String osName = System.getProperty("os.name");
+		// Standard API first (works on all modern JDKs); fall back to the old per-OS code
+		try {
+			if (java.awt.Desktop.isDesktopSupported()
+					&& java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.BROWSE)) {
+				java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
+				return;
+			}
+		} catch (Throwable t) {
+			// fall through to the legacy code
+		}
 		try {
 			if (osName.startsWith("Mac OS")) {
 				Class fileMgr = Class.forName("com.apple.eio.FileManager");

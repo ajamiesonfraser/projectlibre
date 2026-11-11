@@ -165,7 +165,13 @@ public abstract class StartupFactory {
 //		System.out.println("---------- StartupFactory instanceFromNewSession#1 main");
 		Environment.setClientSide(true);
 
-		System.setSecurityManager(null);
+		// Java 24+ throws UnsupportedOperationException from setSecurityManager,
+		// even for null. Only clear a security manager if one is actually installed.
+		try {
+			if (System.getSecurityManager()!=null) System.setSecurityManager(null);
+		} catch (Throwable e) {
+			// not supported on this Java version: nothing to clear
+		}
 		Thread loadConfigThread=new Thread("loadConfig"){
 			public void run() {
 				long t=System.currentTimeMillis();

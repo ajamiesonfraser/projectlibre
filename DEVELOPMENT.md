@@ -135,6 +135,11 @@ dialogs, which keeps automated runs simple.
 * **Java level.** `build.xml` compiles with `-source/-target 1.8` (properties
   `javac.source` and `javac.target`) so the jar runs on Java 8+. Newer JDKs
   can't emit the original 1.5 bytecode. Avoid Java 9+ APIs in the code.
+* **Test on the newest JDK too** (currently 25). Recent Java versions remove
+  old APIs: `System.setSecurityManager` throws on Java 24+, and the
+  `com.apple.eawt` Mac APIs are inaccessible since Java 9. Mac menu, Dock and
+  Finder integration now goes through `MacIntegration` (java.awt.Desktop and
+  Taskbar). CI builds on Java 11, 21 and 25.
 * **JAXB** was removed from the JDK in Java 11. Its jars are now in
   `openproj_contrib/lib/jaxb/` and bundled into `openproj-contrib.jar`.
 * **Saved workspaces.** Column widths and splitter positions are saved per

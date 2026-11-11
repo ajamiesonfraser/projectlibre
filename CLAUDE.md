@@ -38,6 +38,10 @@ Double-clicking a task row opens Task Information.
   hide the OpenProj/ProjectLibre logo** at the top left of the ribbon (CPAL
   attribution requirement). New files get a short CPAL note (see
   `ModernTheme.java`).
+* **Runtime range:** users run anything from Java 11 to the newest release
+  (25 at the time of writing). Before shipping, run the app on the newest JDK
+  as well as 21, through the no-file first-run path (license → tips →
+  Create Project), not just with a file argument.
 * **Java level:** code must compile with `-source 1.8`. No `var`, no Java 9+
   APIs. FlatLaf and other optional libraries are loaded by class name where a
   failure should fall back gracefully (see `LafManagerImpl.installModernLaf`).

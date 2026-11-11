@@ -603,7 +603,17 @@ public class JRibbonFrame extends JFrame {
 						setLegacyIconImages(Arrays.asList(image16));
 					}
 					if (image128 != null) {
+						// Java 9+: java.awt.Taskbar is the supported way to set the Dock icon
+						boolean dockIconSet = false;
 						try {
+							Class taskbarClass = Class.forName("java.awt.Taskbar");
+							Object taskbar = taskbarClass.getMethod("getTaskbar").invoke(null);
+							taskbarClass.getMethod("setIconImage", Image.class).invoke(taskbar, image128);
+							dockIconSet = true;
+						} catch (Throwable t) {
+							// Java 8 or unsupported platform: try the legacy Apple API below
+						}
+						if (!dockIconSet) try {
 							Class appClass = Class
 									.forName("com.apple.eawt.Application");
 							if (appClass != null) {
@@ -617,8 +627,7 @@ public class JRibbonFrame extends JFrame {
 								}
 							}
 						} catch (Throwable t) {
-							t.printStackTrace();
-							// give up
+							// com.apple.eawt not accessible (Java 9+): keep the default icon
 						}
 					}
 					setMainAppIcon(icon);

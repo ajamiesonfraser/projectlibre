@@ -13,6 +13,10 @@ JAR="$ROOT/openproj_build/dist/projectlibre.jar"
 [ -f "$JAR" ] || "$ROOT/scripts/build.sh"
 FILE="${1:-}"
 shift || true
+if [ "$(uname -s)" = "Darwin" ]; then
+  # Proper name and icon in the macOS Dock instead of the generic Java one
+  set -- -Xdock:name=ProjectLibre "-Xdock:icon=$ROOT/openproj_build/resources/projectlibre.png" "$@"
+fi
 if [ -n "$FILE" ]; then
   exec java -Xms128m -Xmx1g "$@" -jar "$JAR" "$FILE"
 else
