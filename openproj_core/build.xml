@@ -1,5 +1,9 @@
 <project default="dist" basedir=".">
 	<property file="build.properties"/>
+	<!-- Java language level; override with -Djavac.source=... (JDK 21 cannot emit 1.5 bytecode) -->
+	<property name="javac.source" value="1.8"/>
+	<property name="javac.target" value="1.8"/>
+	<property name="javac.encoding" value="ISO-8859-1"/>
 
 	<path id="compile.class.path">
 		<fileset dir="../openproj_contrib">
@@ -18,8 +22,10 @@
 			classpathref="compile.class.path"
 			debug="off"
 			nowarn="on"
-			source="1.5"
-			target="1.5">
+			source="${javac.source}"
+			target="${javac.target}"
+			encoding="${javac.encoding}"
+			includeantruntime="false">
 				<src path="${src}" />
 				<include name="**/*" />
 				<exclude name="**/version.properties" />
